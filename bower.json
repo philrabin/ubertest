@@ -1,0 +1,14 @@
+{
+    "name": "ubertest",
+    "version": "1.0.0",
+    "dependencies": {
+        "requirejs": "latest",
+        "jquery": "latest",
+        "backbone-amd": "latest",
+        "underscore-amd": "latest",
+        "requirejs-text": "latest",
+        "requirejs-plugins": "latest",
+        "normalize-css": "latest",
+        "less.js": "latest"
+    }
+}

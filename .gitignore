@@ -1,5 +1,7 @@
 venv
 .idea
+.env
+static/scripts/libs
 *.py[cod]
 
 # C extensions
