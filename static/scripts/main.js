@@ -10,6 +10,6 @@ require.config({
     }
 });
 
-require(['app/views/app'], function(AppView) {
+require(['app/views/App'], function(AppView) {
     return new AppView();
 });
