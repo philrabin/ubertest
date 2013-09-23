@@ -10,6 +10,13 @@ require.config({
     }
 });
 
+define(
+    'truckLocations',
+    ['app/collections/TruckLocationCollection'],
+    function(TruckLocationCollection){
+    return new TruckLocationCollection();
+});
+
 require(['app/views/App'], function(AppView) {
     return new AppView();
 });

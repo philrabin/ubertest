@@ -1,11 +1,24 @@
-define(['backbone',
-    'app/collections/TruckLocationCollection',
-    'goog!maps,3,other_params:sensor=false'
-], function(Backbone, TruckLocationCollection, google) {
+define([
+    'backbone',
+    'underscore',
+    'app/views/MapView',
+    'text!templates/app.html',
+    'truckLocations'
+], function(Backbone, _, MapView, html, truckLocations) {
     return Backbone.View.extend({
         initialize: function () {
+            this.$el.html(html);
+            this.mapView = new MapView();
+            this.$('.main').html(this.mapView.render().el);
+
+            this.listenTo(truckLocations, 'sync', this.onTruckLocationsSync);
+            truckLocations.fetch();
         },
 
-        el: 'body'
+        onTruckLocationsSync: function(){
+            console.log('on truck locations sync', arguments);
+        },
+
+        el: '#app'
     });
 });

@@ -1,0 +1,48 @@
+html,
+body {
+    height: 100%;
+    width: 100%;
+    background: @background-color;
+    font-size: @default-font-size;
+    color: @default-font-color;
+    background: @background-image no-repeat center center fixed;
+    .background-size(cover);
+}
+
+.title-text {
+    font-family: @title-text-font;
+    font-size: 30px;
+    font-weight: normal;
+}
+
+.header {
+    margin-left: 40px;
+}
+
+.main {
+    position: absolute;
+    top: 80px;
+    right: 40px;
+    bottom: 40px;
+    left: 40px;
+    background: rgba(255, 255, 255, .4);
+    .box-shadow(0 0 5px 5px rgba(0, 0, 0, .1));
+    .clearfix;
+}
+
+.footer {
+    margin-left: 40px;
+    position: absolute;
+    bottom: 10px;
+}
+
+.map-view {
+    height: 100%;
+    width: 100%;
+
+    .map-canvas {
+        height: 100%;
+        width: 100%;
+    }
+}
+

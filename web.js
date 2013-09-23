@@ -9,8 +9,6 @@ app.set('views', __dirname + '/views');
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'ejs');
 
-app.set('title', 'SF Food Truck Locations');
-
 app.get('/', function(request, response) {
     response.render('index.html');
 });
