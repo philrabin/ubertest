@@ -9,6 +9,7 @@
         "requirejs-text": "latest",
         "requirejs-plugins": "latest",
         "normalize-css": "latest",
-        "less.js": "latest"
+        "less.js": "latest",
+        "require-handlebars-plugin": "latest"
     }
 }

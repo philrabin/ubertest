@@ -4,13 +4,13 @@ body {
     width: 100%;
     background: @background-color;
     font-size: @default-font-size;
+    font-family: @default-font;
     color: @default-font-color;
     background: @background-image no-repeat center center fixed;
     .background-size(cover);
 }
 
 .title-text {
-    font-family: @title-text-font;
     font-size: 30px;
     font-weight: normal;
 }
@@ -21,17 +21,17 @@ body {
 
 .main {
     position: absolute;
-    top: 80px;
+    top: 70px;
     right: 40px;
     bottom: 40px;
     left: 40px;
-    background: rgba(255, 255, 255, .4);
+    background: rgba(255, 255, 255, .4) center center no-repeat;
     .box-shadow(0 0 5px 5px rgba(0, 0, 0, .1));
-    .clearfix;
 }
 
 .footer {
-    margin-left: 40px;
+    margin: 0 40px;
+    font-size: 14px;
     position: absolute;
     bottom: 10px;
 }
@@ -39,10 +39,74 @@ body {
 .map-view {
     height: 100%;
     width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+    overflow: hidden;
 
     .map-canvas {
         height: 100%;
         width: 100%;
     }
+}
+
+.list-view {
+    display: none;
+    position: absolute;
+    z-index: 1;
+    background: rgba(255, 255, 255, .8);
+    top: 10px;
+    left: 10px;
+    bottom: 10px;
+    width: 0;
+    width: 250px;
+
+    &.open {
+        display: block;
+    }
+
+
+    color: #333;
+
+    .list-title {
+        height: 20px;
+        font-size: 20px;
+        font-family: @default-font;
+        color: #111;
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 10px;
+    }
+
+
+    .list {
+        position: absolute;
+        top: 40px;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        overflow: scroll;
+
+        .list-item {
+            padding: 10px 10px 10px 35px;
+            border-bottom: 1px solid rgba(0, 0, 0, .2);
+            font-family: @default-font;
+            font-weight: normal;
+            background: url('/img/truck-icon.png') no-repeat 10px 16px;
+
+            .name {
+                font-size: 18px;
+            }
+
+            .desc {
+                font-size: 14px;
+            }
+        }
+    }
+
+
+
 }
 
