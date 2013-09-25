@@ -2,25 +2,44 @@ define([
     'backbone',
     'underscore',
     'hbs!templates/map-view',
+    'app/views/MapItemView',
     'goog!maps,3,other_params:sensor=false&key=AIzaSyDzkmLdG8unbDJ23RYQ56DlYbnS1eBCNcQ'
-], function(Backbone, _, html, goog) {
+], function(Backbone, _, mapViewTmpl, MapItemView, goog) {
 
+    /**
+     * Default lat long for San Francisco
+     * location not shared
+     * @type {{lat: number, lng: number}}
+     */
     var SF = {
         lat: 37.7898263,
         lng: -122.4012879
     };
 
+    /**
+     * Wrapper around a google maps instance
+     * takes a TruckLocationCollection
+     * @class
+     */
     return Backbone.View.extend({
         initialize: function() {
+            // create a debounced throttle function delegate to
+            // prevent too many calls when the bounds change
             this.refreshData = _.debounce(_.bind(this.onRefreshData, this), 250);
             this.listenTo(this.collection, 'reset', this.onTruckLocationsReset);
-            this.markers = [];
+            this.mapItems = [];
         },
 
         className: 'map-view',
 
+        /**
+         * Wait for geo location before rendering a map
+         * if not, then use default location
+         * @returns {Backbone.View}
+         * @public
+         */
         render: function() {
-            this.$el.html(html);
+            this.$el.html(mapViewTmpl);
 
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(_.bind(this.onGeoLocation, this));
@@ -29,14 +48,30 @@ define([
             return this;
         },
 
+        /**
+         * Geo location was successfully granted
+         * @param position - geo location lat lng
+         * @private
+         */
         onGeoLocation: function(position){
             this.loadMap(position.coords.latitude, position.coords.longitude)
         },
 
+        /**
+         * Geo location denied from user
+         * load SF lat long
+         * @param error
+         * @private
+         */
         onGeoLocationError: function(error) {
             this.loadMap(SF.lat, SF.lng);
         },
 
+        /**
+         * Load an instance of google maps
+         * @param {Number} latitude
+         * @param {Number} longitude
+         */
         loadMap: function (latitude, longitude){
             var mapOptions = {
                 zoom: 16,
@@ -49,62 +84,84 @@ define([
                 _.bind(this.onBoundsChange, this));
         },
 
+        /**
+         * The map bounds were change
+         * @private
+         */
         onBoundsChange: function(){
             this.refreshData();
         },
 
+        /**
+         * Notify the app that the map bounds changed
+         * @private
+         */
         onRefreshData: function(){
             this.trigger('change:bounds');
         },
 
+        /**
+         * The truck location collection was reset
+         * @private
+         */
         onTruckLocationsReset: function(){
+            // remove markers that are out of bounds
             this.clearUnusedMarkers();
 
-            var newMarkers = [];
+            var newItems = [];
 
+            // walk through each item in the collection
             this.collection.each(_.bind(function(truck){
                 // not a valid lat lng
                 if(!_.isNumber(truck.lat()) || !_.isNumber(truck.lng())){
                     return;
                 }
 
-                var latLng = new google.maps.LatLng(truck.lat(), truck.lng());
-
-                var exists = _.any(this.markers, function(marker){
-                    return marker.truck.id === truck.id;
+                // check to see if it's already on the map
+                var exists = _.any(this.mapItems, function(items){
+                    return items.model.id === truck.id;
                 });
 
+                // return if it exists to prevent duplicated
                 if(exists){
                     return;
                 }
 
-                var truckMarker = new google.maps.Marker({
-                    position: latLng,
-                    map: this.map,
-                    icon: '/img/truck-icon.png'
+                // create a wrapper around a maker
+                var mapItem = new MapItemView({
+                    model: truck,
+                    map: this.map
                 });
 
-                truckMarker.truck = truck;
-                newMarkers.push(truckMarker);
+                mapItem.render();
+                newItems.push(mapItem);
             }, this));
 
-            this.markers = this.markers.concat(newMarkers);
+            // join the new items together with the current
+            this.mapItems = this.mapItems.concat(newItems);
         },
 
 
+        /**
+         * Remove markers that aren't in bounds
+         * @private
+         */
         clearUnusedMarkers: function(){
             var bounds = this.map.getBounds();
             var deleted = [];
-            _.each(this.markers, _.bind(function(marker){
+            _.each(this.mapItems, _.bind(function(mapItem){
+                var marker = mapItem.marker;
+
+                // compare against the current map bounds
                 if(!marker.position || !bounds.contains(marker.position)) {
                     // delete the marker
-                    marker.setMap(null);
-                    deleted.push(marker);
+                    mapItem.destroy();
+                    deleted.push(mapItem);
                 }
             }, this));
 
             // remove the deleted items from the list of markers
-            this.markers = _.without.apply(_, [this.markers].concat(deleted));
+            this.mapItems = _.without.apply(_, [this.mapItems].concat(deleted));
         }
     })
 });

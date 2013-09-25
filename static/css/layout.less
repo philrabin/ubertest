@@ -2,6 +2,10 @@ html,
 body {
     height: 100%;
     width: 100%;
+    line-height: @default-line-height;
+}
+
+body {
     background: @background-color;
     font-size: @default-font-size;
     font-family: @default-font;
@@ -13,6 +17,7 @@ body {
 .title-text {
     font-size: 30px;
     font-weight: normal;
+    line-height: normal;
 }
 
 .header {
@@ -94,14 +99,35 @@ body {
             border-bottom: 1px solid rgba(0, 0, 0, .2);
             font-family: @default-font;
             font-weight: normal;
-            background: url('/img/truck-icon.png') no-repeat 10px 16px;
+            background: url('/img/truck-icon-16.png') no-repeat 10px 16px;
+            cursor: pointer;
 
             .name {
-                font-size: 18px;
+                font-size: 20px;
+                line-height: normal;
             }
 
             .desc {
-                font-size: 14px;
+                width: auto;
+            }
+
+            &.active {
+                .transition(background-color 350ms);
+                color: #fff;
+                background-color: rgba(0, 0, 0, .8);
+            }
+
+            &.collapsed {
+                .desc {
+                    height: @default-line-height;
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                }
+
+                .location {
+                    display: none;
+                }
             }
         }
     }
