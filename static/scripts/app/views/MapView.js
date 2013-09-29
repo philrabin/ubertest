@@ -42,7 +42,12 @@ define([
             this.$el.html(mapViewTmpl);
 
             if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(_.bind(this.onGeoLocation, this));
+                navigator.geolocation.getCurrentPosition(
+                    _.bind(this.onGeoLocation, this),
+                    _.bind(this.onGeoLocationError, this)
+                );
+            } else {
+                this.loadMap(SF.lat, SF.lng);
             }
 
             return this;
